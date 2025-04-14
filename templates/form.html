@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ 'Editar' if produto else 'Cadastrar' }} Produto - CAMB</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='form.css') }}" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">CAMB • Gestão de Produtos</a>
+      </div>
+    </nav>
+
+    <div class="container-fluid px-3 px-md-5">
+      <div class="form-container">
+        <h4 class="text-center mb-4">{{ 'Editar' if produto else 'Cadastrar' }} Produto</h4>
+
+        <form method="POST" enctype="multipart/form-data" novalidate id="produtoForm">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ produto['codigo'] if produto else '' }}" placeholder="Código do Produto" required aria-describedby="codigoFeedback" />
+                <label for="codigo"><i class="fa-solid fa-barcode"></i> Código</label>
+                <div id="codigoFeedback" class="invalid-feedback">Por favor, informe o código do produto.</div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ produto['nome'] if produto else '' }}" placeholder="Nome do Produto" required aria-describedby="nomeFeedback" />
+                <label for="nome"><i class="fa-solid fa-box"></i> Nome do Produto</label>
+                <div id="nomeFeedback" class="invalid-feedback">Por favor, informe o nome do produto.</div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="form-floating">
+                <select class="form-select" id="marca" name="marca" required aria-describedby="marcaFeedback">
+                  <option value="" {% if not produto %}selected{% endif %}>Selecione uma marca</option>
+                  <option value="B. Braun" {% if produto and produto['marca'] == 'B. Braun' %}selected{% endif %}>B. Braun</option>
+                  <option value="Cremer" {% if produto and produto['marca'] == 'Cremer' %}selected{% endif %}>Cremer</option>
+                  <option value="Mucambo" {% if produto and produto['marca'] == 'Mucambo' %}selected{% endif %}>Mucambo</option>
+                  <option value="Nipro" {% if produto and produto['marca'] == 'Nipro' %}selected{% endif %}>Nipro</option>
+                  <option value="Bio Higienic" {% if produto and produto['marca'] == 'Bio Higienic' %}selected{% endif %}>Bio Higienic</option>
+                </select>
+                <label for="marca"><i class="fa-solid fa-tag"></i> Marca</label>
+                <div id="marcaFeedback" class="invalid-feedback">Por favor, selecione uma marca.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-floating">
+              <textarea class="form-control" id="descricao" name="descricao" style="height: 100px" placeholder="Descrição do Produto" required aria-describedby="descFeedback descCount">{{ produto['descricao'] if produto else '' }}</textarea>
+              <label for="descricao"><i class="fa-solid fa-align-left"></i> Descrição</label>
+              <div id="descFeedback" class="invalid-feedback">Por favor, informe a descrição do produto.</div>
+              <small id="descCount" class="text-muted">0/500 caracteres</small>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3 col-6 mb-3">
+              <div class="form-floating">
+                <input type="number" step="0.01" class="form-control" id="altura" name="altura" value="{{ produto['altura'] if produto else '' }}" placeholder="Altura" aria-describedby="alturaFeedback" />
+                <label for="altura"><i class="fa-solid fa-ruler-vertical"></i> Altura (cm)</label>
+                <div id="alturaFeedback" class="invalid-feedback">Por favor, informe uma altura válida.</div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+              <div class="form-floating">
+                <input type="number" step="0.01" class="form-control" id="largura" name="largura" value="{{ produto['largura'] if produto else '' }}" placeholder="Largura" aria-describedby="larguraFeedback" />
+                <label for="largura"><i class="fa-solid fa-ruler-horizontal"></i> Largura (cm)</label>
+                <div id="larguraFeedback" class="invalid-feedback">Por favor, informe uma largura válida.</div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+              <div class="form-floating">
+                <input type="number" step="0.01" class="form-control" id="comprimento" name="comprimento" value="{{ produto['comprimento'] if produto else '' }}" placeholder="Comprimento" aria-describedby="comprimentoFeedback" />
+                <label for="comprimento"><i class="fa-solid fa-ruler-combined"></i> Comprimento (cm)</label>
+                <div id="comprimentoFeedback" class="invalid-feedback">Por favor, informe um comprimento válido.</div>
+              </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+              <div class="form-floating">
+                <input type="number" step="0.01" class="form-control" id="peso" name="peso" value="{{ produto['peso'] if produto else '' }}" placeholder="Peso" aria-describedby="pesoFeedback" />
+                <label for="peso"><i class="fa-solid fa-weight-scale"></i> Peso (kg)</label>
+                <div id="pesoFeedback" class="invalid-feedback">Por favor, informe um peso válido.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="fotos" class="form-label">
+              <i class="fa-solid fa-images"></i> Fotos do Produto
+              <span class="visually-hidden">(máximo 10 imagens, 5MB cada)</span>
+            </label>
+            {% if imagens %}
+            <div class="d-flex flex-wrap gap-2 mb-2">
+              {% for imagem in imagens %}
+              <div class="img-preview-wrapper">
+                <img src="{{ url_for('static', filename='uploads/' + imagem[1]) }}" class="img-thumbnail" style="width: 100px" alt="Imagem atual do produto" loading="lazy" />
+                <a href="{{ url_for('excluir_imagem', id=imagem[0]) }}" class="remove-btn" onclick="return confirm('Tem certeza que deseja excluir esta imagem?');" aria-label="Remover imagem {{ imagem[1] }}">
+                  ×
+                </a>
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            <div class="drop-zone" ondrop="handleDrop(event)" ondragover="event.preventDefault()">
+              <input type="file" class="form-control mt-2" id="fotos" name="fotos[]" accept="image/*" multiple onchange="previewImagens(event)" />
+            </div>
+            <small class="text-muted">
+              Você pode selecionar até 10 imagens (máximo 5MB por imagem).
+              <span id="fileCount">0/10 imagens selecionadas</span>
+            </small>
+            <div id="preview-container" class="mt-3 d-flex flex-wrap gap-2" aria-live="polite"></div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              <i id="salvarIcon" class="fa-solid fa-floppy-disk"></i> Salvar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Validação do formulário
+      (() => {
+        "use strict";
+        const form = document.getElementById("produtoForm");
+        form.addEventListener(
+          "submit",
+          (event) => {
+            if (!form.checkValidity()) {
+              event.preventDefault();
+              event.stopPropagation();
+            } else {
+              const submitBtn = document.getElementById("submitBtn");
+              submitBtn.disabled = true;
+              submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Salvando...';
+            }
+            form.classList.add("was-validated");
+          },
+          false
+        );
+      })();
+
+      // Validação em tempo real
+      document.getElementById("codigo").addEventListener("input", function () {
+        const codigo = this.value;
+        const feedback = document.getElementById("codigoFeedback");
+        if (codigo.length < 3) {
+          this.classList.add("is-invalid");
+          feedback.textContent = "O código deve ter pelo menos 3 caracteres.";
+        } else {
+          this.classList.remove("is-invalid");
+          this.classList.add("is-valid");
+        }
+      });
+
+      document.getElementById("nome").addEventListener("input", function () {
+        const nome = this.value;
+        const feedback = document.getElementById("nomeFeedback");
+        if (nome.length < 1) {
+          this.classList.add("is-invalid");
+          feedback.textContent = "O nome é obrigatório.";
+        } else {
+          this.classList.remove("is-invalid");
+          this.classList.add("is-valid");
+        }
+      });
+
+      document.getElementById("marca").addEventListener("change", function () {
+        const marca = this.value;
+        const feedback = document.getElementById("marcaFeedback");
+        if (!marca) {
+          this.classList.add("is-invalid");
+          feedback.textContent = "Selecione uma marca.";
+        } else {
+          this.classList.remove("is-invalid");
+          this.classList.add("is-valid");
+        }
+      });
+
+      document.getElementById("descricao").addEventListener("input", function () {
+        const count = this.value.length;
+        const counter = document.getElementById("descCount");
+        counter.textContent = `${count}/500 caracteres`;
+        if (count > 500) {
+          this.classList.add("is-invalid");
+          counter.classList.add("text-danger");
+        } else {
+          this.classList.remove("is-invalid");
+          counter.classList.remove("text-danger");
+        }
+      });
+
+      ['altura', 'largura', 'comprimento', 'peso'].forEach((field) => {
+        document.getElementById(field).addEventListener("input", function () {
+          const value = this.value;
+          const feedback = document.getElementById(`${field}Feedback`);
+          if (value && (isNaN(value) || value <= 0)) {
+            this.classList.add("is-invalid");
+            feedback.textContent = `Por favor, informe um ${field} válido maior que zero.`;
+          } else {
+            this.classList.remove("is-invalid");
+            if (value) this.classList.add("is-valid");
+          }
+        });
+      });
+
+      // Visualização de imagens
+      function previewImagens(event) {
+        const container = document.getElementById("preview-container");
+        const fileCount = document.getElementById("fileCount");
+        container.innerHTML = "";
+        const files = event.target.files;
+
+        if (files.length > 10) {
+          alert("Você pode selecionar no máximo 10 imagens.");
+          event.target.value = "";
+          fileCount.textContent = "0/10 imagens selecionadas";
+          return;
+        }
+
+        fileCount.textContent = `${files.length}/10 imagens selecionadas`;
+        if (files.length >= 10) {
+          event.target.disabled = true;
+        }
+
+        Array.from(files).forEach((file) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "img-preview-wrapper position-relative";
+
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.className = "img-thumbnail";
+            img.style.width = "100px";
+            img.setAttribute("loading", "lazy");
+
+            const removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.className = "btn btn-sm btn-danger position-absolute top-0 end-0";
+            removeBtn.innerHTML = "×";
+            removeBtn.setAttribute("aria-label", "Remover imagem de visualização");
+            removeBtn.onclick = () => {
+              wrapper.remove();
+              const currentFiles = document.getElementById("fotos").files;
+              const newFileList = new DataTransfer();
+              Array.from(currentFiles)
+                .filter((f) => f !== file)
+                .forEach((f) => newFileList.items.add(f));
+              document.getElementById("fotos").files = newFileList.files;
+              fileCount.textContent = `${newFileList.files.length}/10 imagens selecionadas`;
+              document.getElementById("fotos").disabled = newFileList.files.length >= 10;
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            container.appendChild(wrapper);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // Drag-and-drop
+      function handleDrop(event) {
+        event.preventDefault();
+        const files = event.dataTransfer.files;
+        const input = document.getElementById("fotos");
+        input.files = files;
+        previewImagens({ target: { files } });
+      }
+    </script>
+  </body>
+</html>

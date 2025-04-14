@@ -1,0 +1,215 @@
+/* Fundo da página */
+body {
+  background: linear-gradient(135deg, #EAF1FB, #F5F7FB); /* Mesmo gradiente de index */
+  min-height: 100vh;
+}
+
+/* Contêiner do formulário */
+.form-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #F5F7FB; /* Fundo claro */
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajuste para telas maiores */
+@media (min-width: 992px) {
+  .form-container {
+    max-width: 900px;
+  }
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 767px) {
+  .form-container {
+    padding: 25px;
+    margin: 1.5rem;
+  }
+  .form-floating label {
+    font-size: 0.9rem;
+  }
+  .form-control,
+  .form-select {
+    font-size: 0.9rem;
+  }
+}
+
+/* Ajuste para telas muito pequenas */
+@media (max-width: 576px) {
+  .row > .col-md-3,
+  .row > .col-md-4,
+  .row > .col-6 {
+    width: 100%;
+  }
+}
+
+/* Estilo da navbar */
+.navbar {
+  background-color: #182848; /* Mesmo tom do index */
+}
+
+.navbar-brand {
+  color: #F5F7FB !important;
+  font-weight: bold;
+}
+
+/* Estilos dos campos do formulário */
+.form-floating label {
+  color: #6B7280; /* Texto secundário */
+}
+
+.form-control:focus {
+  box-shadow: 0 0 6px rgba(75, 108, 183, 0.4); /* Sombra com azul primário */
+  border-color: #4B6CB7;
+}
+
+.form-control.is-invalid {
+  border-color: #F06575; /* Vermelho suave */
+}
+
+.form-control.is-valid {
+  border-color: #34C38F; /* Verde suave */
+}
+
+.form-control,
+.form-select {
+  min-height: 48px;
+  font-size: 1rem;
+  background-color: #F5F7FB; /* Fundo claro */
+  color: #2D3748; /* Texto principal */
+}
+
+.form-floating > .form-control,
+.form-floating > .form-select {
+  height: calc(3.5rem + 2px);
+}
+
+label {
+  font-size: 0.95rem;
+}
+
+.row > .mb-3 {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+/* Estilo das imagens de visualização */
+.img-preview-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 8px;
+}
+
+.img-preview-wrapper img {
+  max-height: 120px;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.img-preview-wrapper img:hover {
+  transform: scale(1.05);
+}
+
+/* Botão de remover imagem */
+.remove-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #F06575; /* Vermelho suave */
+  color: #F5F7FB;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.remove-btn:hover {
+  background-color: #D95666;
+}
+
+/* Contêiner de visualização de imagens */
+#preview-container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 10px;
+  padding-bottom: 10px;
+  margin-top: 15px;
+}
+
+/* Estilo para drag-and-drop */
+.drop-zone {
+  border: 2px dashed #4B6CB7; /* Azul primário */
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #EAF1FB; /* Fundo suave */
+  transition: background-color 0.2s ease;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  background-color: #DCE6F6; /* Azul claro ao interagir */
+}
+
+/* Estilo dos ícones */
+i.fa-solid {
+  color: #4B6CB7; /* Azul primário */
+}
+
+button.btn-primary i.fa-solid {
+  color: #F5F7FB;
+}
+
+/* Botões */
+.btn-primary {
+  background-color: #4B6CB7;
+  border-color: #4B6CB7;
+  color: #F5F7FB;
+}
+
+.btn-primary:hover {
+  background-color: #3B5A9A;
+  border-color: #3B5A9A;
+}
+
+.btn-outline-secondary {
+  border-color: #6B7280;
+  color: #6B7280;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6B7280;
+  color: #F5F7FB;
+}
+
+/* Melhorar contraste do texto muted */
+small.text-muted {
+  color: #6B7280 !important;
+}
+
+/* Estilo para contador de caracteres */
+#descCount.text-danger {
+  color: #F06575 !important;
+}
+
+/* Estilo dos botões */
+.btn {
+  transition: transform 0.1s ease;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+
+/* Ajustar alinhamento dos botões */
+.d-flex.justify-content-end {
+  gap: 1rem;
+}
