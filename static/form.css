@@ -53,6 +53,7 @@ body {
 .navbar-brand {
   color: #F5F7FB !important;
   font-weight: bold;
+  font-size: 1.5rem;
 }
 
 /* Estilos dos campos do formulário */
@@ -212,4 +213,11 @@ small.text-muted {
 /* Ajustar alinhamento dos botões */
 .d-flex.justify-content-end {
   gap: 1rem;
+}
+
+.logo-camb {
+  height: 32px;
+  width: auto;
+  margin-right: 8px;
+  vertical-align: middle;
 }
