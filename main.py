@@ -55,7 +55,7 @@ def init_db():
                 cursor.execute('ALTER TABLE produtos ADD COLUMN marca TEXT')
             conn.commit()
     except sqlite3.Error as e:
-        logger.error(f"Erro ao inicializar o banco de dados: {e}")
+        logger.error(f"Erro ao inicializar oijf banco de dados: {e}")
         raise
 
 # Verifica extensões permitidas
@@ -227,6 +227,7 @@ def cadastrar():
 def editar(id):
     try:
         with sqlite3.connect('database.db') as conn:
+            conn.row_factory = sqlite3.Row  # Garante que as linhas sejam retornadas como dicionários
             cursor = conn.cursor()
 
             if request.method == 'POST':
@@ -304,7 +305,11 @@ def editar(id):
             cursor.execute("SELECT id, caminho FROM imagens WHERE produto_id=?", (id,))
             imagens = cursor.fetchall()
 
-        return render_template('form.html', produto=produto, imagens=imagens)
+            # Log para depuração
+            logger.info(f"Produto encontrado: {dict(produto)}")
+            logger.info(f"Imagens encontradas: {imagens}")
+
+        return render_template('form.html', produto=dict(produto), imagens=imagens)
     except sqlite3.Error as e:
         logger.error(f"Erro ao editar produto: {e}")
         flash("Erro ao carregar produto.", "danger")
