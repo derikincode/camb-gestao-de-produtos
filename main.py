@@ -55,7 +55,7 @@ def init_db():
                 cursor.execute('ALTER TABLE produtos ADD COLUMN marca TEXT')
             conn.commit()
     except sqlite3.Error as e:
-        logger.error(f"Erro ao inicializar oijf banco de dados: {e}")
+        logger.error(f"Erro ao inicializar o banco de dados: {e}")
         raise
 
 # Verifica extensões permitidas
@@ -166,6 +166,9 @@ def cadastrar():
         if marca not in ['B. Braun', 'Cremer', 'Mucambo', 'Nipro', 'Bio Higienic']:
             flash("Marca inválida. Escolha entre B. Braun, Cremer, Mucambo, Nipro ou Bio Higienic.", "danger")
             return redirect(url_for('cadastrar'))
+        if len(descricao) > 300:
+            flash("Descrição excede o limite de 300 caracteres.", "danger")
+            return redirect(url_for('cadastrar'))
         try:
             altura = float(altura) if altura else None
             largura = float(largura) if largura else None
@@ -249,6 +252,9 @@ def editar(id):
                     return redirect(url_for('editar', id=id))
                 if marca not in ['B. Braun', 'Cremer', 'Mucambo', 'Nipro', 'Bio Higienic']:
                     flash("Marca inválida. Escolha entre B. Braun, Cremer, Mucambo, Nipro ou Bio Higienic.", "danger")
+                    return redirect(url_for('editar', id=id))
+                if len(descricao) > 300:
+                    flash("Descrição excede o limite de 300 caracteres.", "danger")
                     return redirect(url_for('editar', id=id))
                 try:
                     altura = float(altura) if altura else None

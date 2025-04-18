@@ -223,10 +223,24 @@ body {
   padding: 20px;
 }
 
+/* Estilo para a descrição no modal */
+#modal-descricao {
+  white-space: pre-wrap; /* Respeita quebras de linha (\n) e quebra automaticamente */
+  word-wrap: break-word; /* Garante que palavras longas sejam quebradas */
+  max-width: 100%; /* Evita que o texto ultrapasse o contêiner */
+  max-height: 150px; /* Limita a altura da descrição */
+  overflow-y: auto; /* Adiciona barra de rolagem vertical, se necessário */
+}
+
 #detalhesModal .modal-footer .btn-secondary {
   background-color: #4B6CB7; /* Azul primário para o botão "Fechar" */
   border-color: #4B6CB7;
   color: #FFFFFF;
+}
+
+.na-value {
+  color: #6B7280; /* Cinza para "N/A" */
+  font-style: italic;
 }
 
 /* Footer fixo */

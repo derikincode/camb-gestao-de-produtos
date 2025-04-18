@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>{{ 'Editar' if produto else 'Cadastrar' }} Produto - CAMB</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"Discount rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='form.css') }}" />
   </head>
   <body>
@@ -61,7 +61,7 @@
                   <textarea class="form-control" id="descricao" name="descricao" style="height: 80px" placeholder="Descrição do Produto" required aria-describedby="descFeedback descCount">{{ produto['descricao'] if produto else '' }}</textarea>
                   <label for="descricao"><i class="fa-solid fa-align-left"></i> Descrição</label>
                   <div id="descFeedback" class="invalid-feedback">Por favor, informe a descrição do produto.</div>
-                  <small id="descCount" class="text-muted">0/500 caracteres</small>
+                  <small id="descCount" class="text-muted">0/300 caracteres</small>
                 </div>
               </div>
               <div class="row">
@@ -156,7 +156,7 @@
               const submitBtn = document.getElementById("submitBtn");
               submitBtn.disabled = true;
               submitBtn.classList.add("btn-loading");
-              submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true 당신"></span> Salvando...';
+              submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Salvando...';
             }
             form.classList.add("was-validated");
           },
@@ -204,8 +204,8 @@
       document.getElementById("descricao").addEventListener("input", function () {
         const count = this.value.length;
         const counter = document.getElementById("descCount");
-        counter.textContent = `${count}/500 caracteres`;
-        if (count > 500) {
+        counter.textContent = `${count}/300 caracteres`;
+        if (count > 300) {
           this.classList.add("is-invalid");
           counter.classList.add("text-danger");
         } else {

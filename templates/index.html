@@ -55,7 +55,7 @@
       {% if produtos %}
       <div class="table-responsive product-table">
         <table class="table table-striped align-middle">
-          <thead class="table-primary">
+          <thead class Правда
             <tr>
               <th scope="col"><i class="fa fa-images me-1"></i> Fotos</th>
               <th scope="col"><i class="fa fa-barcode me-1"></i> Código</th>
@@ -98,7 +98,13 @@
                   N/A
                 {% endif %}
               </td>
-              <td>{{ produto[0]['peso']|default('N/A') }}</td>
+              <td>
+                {% if produto[0]['peso'] is not none and produto[0]['peso'] != '' %}
+                  {{ produto[0]['peso'] }} kg
+                {% else %}
+                  <span class="na-value">N/A</span>
+                {% endif %}
+              </td>
               <td class="text-end">
                 <button class="btn btn-sm btn-outline-primary ver-detalhes" data-bs-toggle="modal" data-bs-target="#detalhesModal"
                   data-codigo="{{ produto[0]['codigo']|default('') }}" data-nome="{{ produto[0]['nome']|default('') }}"
@@ -171,7 +177,7 @@
     <footer class="footer-fixo text-muted">
       <div class="container">
         <small>© 2025 CAMB • Todos os direitos reservados.</small><br />
-        <small>Desenvolvido por <strong>Derik Oliveira</strong></small>
+        <small>Desenvolvido por <strong><a href="https://www.instagram.com/__derikoliveira/">Derik Oliveira</a></strong></small>
       </div>
     </footer>
 
@@ -188,25 +194,28 @@
         const comprimento = document.getElementById("modal-comprimento");
         const peso = document.getElementById("modal-peso");
         const carouselInner = document.getElementById("carousel-inner");
-
+    
         // Define o caminho base para as imagens
         const baseImagePath = "{{ url_for('static', filename='uploads') | safe }}/";
-
+    
         botoes.forEach((botao) => {
           botao.addEventListener("click", () => {
             codigo.textContent = botao.getAttribute("data-codigo") || "N/A";
             nome.textContent = botao.getAttribute("data-nome") || "N/A";
-            marca.textContent = botao.getAttribute("data-marca") || "Não informado";
-            descricao.textContent = botao.getAttribute("data-descricao") || "Sem descrição";
-            altura.textContent = botao.getAttribute("data-altura") ? `${botao.getAttribute("data-altura")} cm` : "Não informado";
-            largura.textContent = botao.getAttribute("data-largura") ? `${botao.getAttribute("data-largura")} cm` : "Não informado";
-            comprimento.textContent = botao.getAttribute("data-comprimento") ? `${botao.getAttribute("data-comprimento")} cm` : "Não informado";
-            peso.textContent = botao.getAttribute("data-peso") ? `${botao.getAttribute("data-peso")} kg` : "Não informado";
-
+            marca.textContent = botao.getAttribute("data-marca") || "N/A";
+            descricao.textContent = botao.getAttribute("data-descricao") || "N/A";
+            altura.textContent = botao.getAttribute("data-altura") ? `${botao.getAttribute("data-altura")} cm` : "N/A";
+            largura.textContent = botao.getAttribute("data-largura") ? `${botao.getAttribute("data-largura")} cm` : "N/A";
+            comprimento.textContent = botao.getAttribute("data-comprimento") ? `${botao.getAttribute("data-comprimento")} cm` : "N/A";
+            
+            // Verifica se o peso é válido (não é "None", vazio ou inválido)
+            const pesoValor = botao.getAttribute("data-peso");
+            peso.textContent = (pesoValor && pesoValor !== "None" && pesoValor !== "" && !isNaN(pesoValor)) ? `${pesoValor} kg` : "N/A";
+    
             try {
               const imagensRaw = botao.getAttribute("data-imagens");
               console.log("Imagens Raw:", imagensRaw); // Debug: Verifica o conteúdo de data-imagens
-
+    
               let imagens = [];
               if (imagensRaw) {
                 try {
@@ -218,7 +227,7 @@
               } else {
                 console.log("Nenhuma imagem encontrada no atributo data-imagens");
               }
-
+    
               carouselInner.innerHTML = "";
               if (!imagens || imagens.length === 0) {
                 console.log("Nenhuma imagem para exibir, mostrando placeholder");
@@ -235,9 +244,9 @@
                   </div>`;
                 });
               }
-
+    
               const carousel = new bootstrap.Carousel(document.getElementById("carouselImagens"), { interval: true });
-
+    
             } catch (error) {
               console.error("Erro geral ao processar imagens:", error);
               carouselInner.innerHTML = `<div class="carousel-item active text-center">
@@ -246,8 +255,8 @@
             }
           });
         });
-
-        // Fecha alertas automaticamente após 5 segundos
+    
+        // Fecha alertas automaticamente após 4 segundos
         const alerts = document.querySelectorAll('.alert-dismissible');
         alerts.forEach(alert => {
           setTimeout(() => {
@@ -260,5 +269,5 @@
         });
       });
     </script>
-  </body>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'932535b04de432f3',t:'MTc0NDk5MDI5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
