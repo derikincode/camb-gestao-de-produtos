@@ -56,7 +56,7 @@
       {% if produtos %}
       <div class="table-responsive product-table">
         <table class="table table-striped align-middle">
-          <thead class Правда
+          <thead>
             <tr>
               <th scope="col"><i class="fa fa-images me-1"></i> Fotos</th>
               <th scope="col"><i class="fa fa-barcode me-1"></i> Código</th>
@@ -112,7 +112,8 @@
                   data-marca="{{ produto[0]['marca']|default('') }}" data-descricao="{{ produto[0]['descricao']|default('') }}"
                   data-altura="{{ produto[0]['altura']|default('') }}" data-largura="{{ produto[0]['largura']|default('') }}"
                   data-comprimento="{{ produto[0]['comprimento']|default('') }}" data-peso="{{ produto[0]['peso']|default('') }}"
-                  data-imagens='{{ produto[1]|map(attribute=1)|list|tojson|safe }}'>
+                  data-imagens='{{ produto[1]|map(attribute=1)|list|tojson|safe }}'
+                  data-imagens-desc='{{ produto[1]|map(attribute=2)|list|tojson|safe }}'>
                   <i class="fa fa-eye"></i>
                 </button>
                 <a href="{{ url_for('editar', id=produto[0]['id']) }}" class="btn btn-sm btn-warning">
@@ -155,6 +156,7 @@
                     <i class="fa fa-chevron-right"></i>
                   </button>
                 </div>
+                <div id="carousel-caption" class="text-center text-muted"></div>
               </div>
               <div class="col-md-6">
                 <h5 id="modal-nome" class="mb-3 fw-bold text-primary"></h5>
@@ -195,6 +197,7 @@
         const comprimento = document.getElementById("modal-comprimento");
         const peso = document.getElementById("modal-peso");
         const carouselInner = document.getElementById("carousel-inner");
+        const carouselCaption = document.getElementById("carousel-caption");
     
         // Define o caminho base para as imagens
         const baseImagePath = "{{ url_for('static', filename='uploads') | safe }}/";
@@ -209,50 +212,64 @@
             largura.textContent = botao.getAttribute("data-largura") ? `${botao.getAttribute("data-largura")} cm` : "N/A";
             comprimento.textContent = botao.getAttribute("data-comprimento") ? `${botao.getAttribute("data-comprimento")} cm` : "N/A";
             
-            // Verifica se o peso é válido (não é "None", vazio ou inválido)
             const pesoValor = botao.getAttribute("data-peso");
             peso.textContent = (pesoValor && pesoValor !== "None" && pesoValor !== "" && !isNaN(pesoValor)) ? `${pesoValor} kg` : "N/A";
     
             try {
               const imagensRaw = botao.getAttribute("data-imagens");
-              console.log("Imagens Raw:", imagensRaw); // Debug: Verifica o conteúdo de data-imagens
+              const descricoesRaw = botao.getAttribute("data-imagens-desc");
     
               let imagens = [];
+              let descricoes = [];
               if (imagensRaw) {
                 try {
                   imagens = JSON.parse(imagensRaw);
-                  console.log("Imagens Parseadas:", imagens); // Debug: Verifica o resultado do parsing
                 } catch (parseError) {
                   console.error("Erro ao parsear JSON de imagens:", parseError);
                 }
-              } else {
-                console.log("Nenhuma imagem encontrada no atributo data-imagens");
+              }
+              if (descricoesRaw) {
+                try {
+                  descricoes = JSON.parse(descricoesRaw);
+                } catch (parseError) {
+                  console.error("Erro ao parsear JSON de descrições:", parseError);
+                }
               }
     
               carouselInner.innerHTML = "";
+              carouselCaption.innerHTML = "";
               if (!imagens || imagens.length === 0) {
-                console.log("Nenhuma imagem para exibir, mostrando placeholder");
                 carouselInner.innerHTML = `<div class="carousel-item active text-center">
                     <div class="no-image-placeholder">PRODUTO SEM IMAGEM</div>
                   </div>`;
+                carouselCaption.innerHTML = "Nenhuma descrição disponível";
               } else {
-                console.log("Exibindo imagens no carrossel:", imagens);
                 imagens.forEach((img, index) => {
                   const imageUrl = `${baseImagePath}${img}`;
-                  console.log(`Carregando imagem ${index + 1}: ${imageUrl}`); // Debug: Verifica o URL gerado
+                  const desc = descricoes[index] && descricoes[index] !== "null" ? descricoes[index] : "Nenhuma descrição disponível";
                   carouselInner.innerHTML += `<div class="carousel-item ${index === 0 ? "active" : ""}">
                     <img src="${imageUrl}" class="d-block mx-auto" alt="Imagem do produto" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'no-image-placeholder\\'>ERRO AO CARREGAR IMAGEM</div>';">
                   </div>`;
+                  if (index === 0) {
+                    carouselCaption.innerHTML = desc;
+                  }
                 });
               }
     
-              const carousel = new bootstrap.Carousel(document.getElementById("carouselImagens"), { interval: true });
+              // Atualiza a descrição ao mudar o slide
+              constcarousel = new bootstrap.Carousel(document.getElementById("carouselImagens"), { interval: true });
+              document.getElementById("carouselImagens").addEventListener('slid.bs.carousel', function (event) {
+                const activeIndex = event.to;
+                const desc = descricoes[activeIndex] && descricoes[activeIndex] !== "null" ? descricoes[activeIndex] : "Nenhuma descrição disponível";
+                carouselCaption.innerHTML = desc;
+              });
     
             } catch (error) {
               console.error("Erro geral ao processar imagens:", error);
               carouselInner.innerHTML = `<div class="carousel-item active text-center">
                   <div class="no-image-placeholder">PRODUTO SEM IMAGEM</div>
                 </div>`;
+              carouselCaption.innerHTML = "Nenhuma descrição disponível";
             }
           });
         });
@@ -270,5 +287,5 @@
         });
       });
     </script>
-  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'932535b04de432f3',t:'MTc0NDk5MDI5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  </body>
 </html>

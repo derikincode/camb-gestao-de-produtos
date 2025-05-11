@@ -43,6 +43,7 @@ def init_db():
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     produto_id INTEGER NOT NULL,
                     caminho TEXT NOT NULL,
+                    descricao TEXT,  -- Nova coluna para descrição da imagem
                     FOREIGN KEY (produto_id) REFERENCES produtos (id) ON DELETE CASCADE
                 )
             ''')
@@ -53,6 +54,11 @@ def init_db():
                 cursor.execute('ALTER TABLE produtos ADD COLUMN peso REAL')
             if 'marca' not in columns:
                 cursor.execute('ALTER TABLE produtos ADD COLUMN marca TEXT')
+            # Adiciona coluna descricao na tabela imagens se não existir
+            cursor.execute("PRAGMA table_info(imagens)")
+            columns = [col[1] for col in cursor.fetchall()]
+            if 'descricao' not in columns:
+                cursor.execute('ALTER TABLE imagens ADD COLUMN descricao TEXT')
             conn.commit()
     except sqlite3.Error as e:
         logger.error(f"Erro ao inicializar o banco de dados: {e}")
@@ -107,7 +113,9 @@ def index():
             cursor = conn.cursor()
             query = """
                 SELECT p.id, p.nome, p.codigo, p.descricao, p.altura, p.largura, p.comprimento, p.peso, p.marca,
-                       GROUP_CONCAT(i.id) as imagem_ids, GROUP_CONCAT(i.caminho) as imagem_caminhos
+                       GROUP_CONCAT(i.id) as imagem_ids, 
+                       GROUP_CONCAT(i.caminho) as imagem_caminhos,
+                       GROUP_CONCAT(i.descricao) as imagem_descricoes
                 FROM produtos p
                 LEFT JOIN imagens i ON p.id = i.produto_id
                 %s
@@ -128,10 +136,11 @@ def index():
                 if p['imagem_ids'] and p['imagem_caminhos']:
                     ids = p['imagem_ids'].split(',')
                     caminhos = p['imagem_caminhos'].split(',')
-                    if len(ids) == len(caminhos):
-                        imagens = list(zip(ids, caminhos))
+                    descricoes = p['imagem_descricoes'].split(',') if p['imagem_descricoes'] else [''] * len(ids)
+                    if len(ids) == len(caminhos) == len(descricoes):
+                        imagens = list(zip(ids, caminhos, descricoes))
                     else:
-                        logger.warning(f"Número de IDs e caminhos não coincidem para o produto {p['id']}")
+                        logger.warning(f"Número de IDs, caminhos ou descrições não coincidem para o produto {p['id']}")
                 produtos_com_imagens.append((p, imagens))
 
         return render_template('index.html', produtos=produtos_com_imagens, search=search)
@@ -152,6 +161,7 @@ def cadastrar():
         peso = request.form['peso'].strip()
         marca = request.form['marca'].strip()
         fotos = request.files.getlist('fotos[]')
+        fotos_desc = request.form.getlist('fotos_desc[]')
 
         # Validações
         if not nome or len(nome) > 100:
@@ -169,6 +179,13 @@ def cadastrar():
         if len(descricao) > 300:
             flash("Descrição excede o limite de 300 caracteres.", "danger")
             return redirect(url_for('cadastrar'))
+        if len(fotos) != len(fotos_desc):
+            flash("Número de descrições não corresponde ao número de imagens.", "danger")
+            return redirect(url_for('cadastrar'))
+        for desc in fotos_desc:
+            if desc and len(desc) > 300:
+                flash("Descrição da imagem excede o limite de 300 caracteres.", "danger")
+                return redirect(url_for('cadastrar'))
         try:
             altura = float(altura) if altura else None
             largura = float(largura) if largura else None
@@ -195,7 +212,7 @@ def cadastrar():
                 ''', (nome, codigo, descricao, altura, largura, comprimento, peso, marca))
                 produto_id = cursor.lastrowid
 
-                for foto in fotos:
+                for foto, foto_desc in zip(fotos, fotos_desc):
                     if foto and allowed_file(foto.filename):
                         if not validate_image_dimensions(foto):
                             flash("Imagem excede dimensões máximas (2000x2000px).", "danger")
@@ -210,8 +227,8 @@ def cadastrar():
                             with open(caminho, 'wb') as f:
                                 f.write(compressed_image.read())
                             cursor.execute('''
-                                INSERT INTO imagens (produto_id, caminho) VALUES (?, ?)
-                            ''', (produto_id, filename))
+                                INSERT INTO imagens (produto_id, caminho, descricao) VALUES (?, ?, ?)
+                            ''', (produto_id, filename, foto_desc.strip() if foto_desc else None))
                         except Exception as e:
                             logger.error(f"Erro ao salvar imagem: {e}")
                             flash("Erro ao salvar imagem.", "danger")
@@ -230,7 +247,7 @@ def cadastrar():
 def editar(id):
     try:
         with sqlite3.connect('database.db') as conn:
-            conn.row_factory = sqlite3.Row  # Garante que as linhas sejam retornadas como dicionários
+            conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
 
             if request.method == 'POST':
@@ -243,6 +260,8 @@ def editar(id):
                 peso = request.form['peso'].strip()
                 marca = request.form['marca'].strip()
                 novas_fotos = request.files.getlist('fotos[]')
+                novas_fotos_desc = request.form.getlist('fotos_desc[]')
+                existing_images_desc = request.form.to_dict(flat=False).get('existing_images_desc', {})
 
                 if not nome or len(nome) > 100:
                     flash("Nome inválido ou muito longo.", "danger")
@@ -256,6 +275,17 @@ def editar(id):
                 if len(descricao) > 300:
                     flash("Descrição excede o limite de 300 caracteres.", "danger")
                     return redirect(url_for('editar', id=id))
+                if len(novas_fotos) != len(novas_fotos_desc):
+                    flash("Número de descrições não corresponde ao número de novas imagens.", "danger")
+                    return redirect(url_for('editar', id=id))
+                for desc in novas_fotos_desc:
+                    if desc and len(desc) > 300:
+                        flash("Descrição da nova imagem excede o limite de 300 caracteres.", "danger")
+                        return redirect(url_for('editar', id=id))
+                for desc in existing_images_desc.values():
+                    if desc and len(desc[0]) > 300:
+                        flash("Descrição da imagem existente excede o limite de 300 caracteres.", "danger")
+                        return redirect(url_for('editar', id=id))
                 try:
                     altura = float(altura) if altura else None
                     largura = float(largura) if largura else None
@@ -277,7 +307,15 @@ def editar(id):
                     UPDATE produtos SET nome=?, codigo=?, descricao=?, altura=?, largura=?, comprimento=?, peso=?, marca=? WHERE id=?
                 ''', (nome, codigo, descricao, altura, largura, comprimento, peso, marca, id))
 
-                for foto in novas_fotos:
+                # Atualiza descrições das imagens existentes
+                for img_id, desc in existing_images_desc.items():
+                    desc = desc[0].strip() if desc and desc[0] else None
+                    cursor.execute('''
+                        UPDATE imagens SET descricao=? WHERE id=?
+                    ''', (desc, img_id))
+
+                # Adiciona novas imagens
+                for foto, foto_desc in zip(novas_fotos, novas_fotos_desc):
                     if foto and allowed_file(foto.filename):
                         if not validate_image_dimensions(foto):
                             flash("Imagem excede dimensões máximas (2000x2000px).", "danger")
@@ -292,8 +330,8 @@ def editar(id):
                             with open(caminho, 'wb') as f:
                                 f.write(compressed_image.read())
                             cursor.execute('''
-                                INSERT INTO imagens (produto_id, caminho) VALUES (?, ?)
-                            ''', (id, filename))
+                                INSERT INTO imagens (produto_id, caminho, descricao) VALUES (?, ?, ?)
+                            ''', (id, filename, foto_desc.strip() if foto_desc else None))
                         except Exception as e:
                             logger.error(f"Erro ao salvar imagem: {e}")
                             flash("Erro ao salvar imagem.", "danger")
@@ -308,10 +346,9 @@ def editar(id):
                 flash("Produto não encontrado.", "danger")
                 return redirect(url_for('index'))
 
-            cursor.execute("SELECT id, caminho FROM imagens WHERE produto_id=?", (id,))
+            cursor.execute("SELECT id, caminho, descricao FROM imagens WHERE produto_id=?", (id,))
             imagens = cursor.fetchall()
 
-            # Log para depuração
             logger.info(f"Produto encontrado: {dict(produto)}")
             logger.info(f"Imagens encontradas: {imagens}")
 
@@ -346,7 +383,7 @@ def deletar(id):
         logger.error(f"Erro ao deletar produto: {e}")
         flash("Erro ao excluir produto.", "danger")
         return redirect(url_for('index'))
-
+    
 @app.route('/excluir-imagem/<int:id>')
 def excluir_imagem(id):
     try:
