@@ -20,6 +20,16 @@
     </nav>
 
     <div class="container-fluid px-3 px-md-5">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
       <div class="form-container">
         <h4 class="text-center mb-3">{{ 'Editar' if produto else 'Cadastrar' }} Produto</h4>
 
@@ -316,6 +326,21 @@
         event.preventDefault();
         event.currentTarget.classList.remove("drag-active");
       }
+
+      // Fechar alertas automaticamente após 4 segundos
+      document.addEventListener("DOMContentLoaded", function () {
+        const alerts = document.querySelectorAll('.alert-dismissible');
+        alerts.forEach(alert => {
+          setTimeout(() => {
+            alert.classList.remove('show');
+            alert.classList.add('fade');
+            setTimeout(() => {
+              alert.remove();
+            }, 300);
+          }, 4000);
+        });
+      });
     </script>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93e39cc63f7f12de',t:'MTc0Njk4NjgwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
   </body>
 </html>
