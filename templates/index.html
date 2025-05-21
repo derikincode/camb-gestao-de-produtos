@@ -5,53 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
     <title>Produtos - CAMB</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-    <link rel="shortcut icon" href="../static/uploads/favicon.png" type="image/x-icon">
-    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="shortcut icon"
+      href="../static/uploads/favicon.png"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='../static/css/index.css') }}"
+    />
   </head>
   <body>
     <nav class="navbar navbar-expand-lg mb-4">
       <div class="container">
         <a class="navbar-brand" href="{{ url_for('index') }}">
-          <img class="logo-camb d-inline-block" src="../static/uploads/logo-camb.png" alt="Logo CAMB">
+          <img
+            class="logo-camb d-inline-block"
+            src="../static/uploads/logo-camb.png"
+            alt="Logo CAMB"
+          />
           • Produtos Cadastrados
-        </a>        
+        </a>
       </div>
     </nav>
 
     <div class="container">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      {% for category, message in messages %}
-      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show"
+        role="alert"
+      >
         {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
-      {% endfor %}
-      {% endif %}
-      {% endwith %}
+      {% endfor %} {% endif %} {% endwith %}
 
       <div class="header-actions mb-4">
         <form method="GET" class="search-bar">
           <div class="input-group">
-            <input class="form-control" type="search" name="search" placeholder="Digite o nome ou código do produto..." value="{{ search }}" />
+            <input
+              class="form-control"
+              type="search"
+              name="search"
+              placeholder="Digite o nome ou código do produto..."
+              value="{{ search }}"
+            />
             <button class="btn btn-outline-primary" type="submit">
               <i class="fa fa-search"></i>
             </button>
           </div>
         </form>
 
-        <a href="{{ url_for('cadastrar') }}" class="btn btn-success d-none d-md-inline-flex align-items-center">
+        <a
+          href="{{ url_for('cadastrar') }}"
+          class="btn btn-success d-none d-md-inline-flex align-items-center"
+        >
           <i class="fa fa-plus me-1"></i> Cadastrar Produto
         </a>
       </div>
 
-      <a href="{{ url_for('cadastrar') }}" class="btn btn-success btn-float position-fixed bottom-0 end-0 m-3 shadow d-md-none">
+      <a
+        href="{{ url_for('cadastrar') }}"
+        class="btn btn-success btn-float position-fixed bottom-0 end-0 m-3 shadow d-md-none"
+      >
         <i class="fa fa-plus"></i>
       </a>
 
-      <p class="text-muted mb-3">Total de produtos: <strong>{{ produtos|length }}</strong></p>
+      <p class="text-muted mb-3">
+        Total de produtos: <strong>{{ produtos|length }}</strong>
+      </p>
 
       {% if produtos %}
       <div class="table-responsive product-table">
@@ -62,64 +98,98 @@
               <th scope="col"><i class="fa fa-barcode me-1"></i> Código</th>
               <th scope="col"><i class="fa fa-box me-1"></i> Nome</th>
               <th scope="col"><i class="fa fa-tag me-1"></i> Marca</th>
-              <th scope="col"><i class="fa fa-align-left me-1"></i> Descrição</th>
-              <th scope="col"><i class="fa fa-ruler-combined me-1"></i> Dimensão</th>
+              <th scope="col">
+                <i class="fa fa-align-left me-1"></i> Descrição
+              </th>
+              <th scope="col">
+                <i class="fa fa-ruler-combined me-1"></i> Dimensão
+              </th>
               <th scope="col"><i class="fa fa-weight-scale me-1"></i> Peso</th>
-              <th scope="col" class="text-end"><i class="fa fa-gear me-1"></i> Ações</th>
+              <th scope="col" class="text-end">
+                <i class="fa fa-gear me-1"></i> Ações
+              </th>
             </tr>
           </thead>
           <tbody>
             {% for produto in produtos %}
             <tr>
               <td class="d-flex flex-wrap gap-1">
-                {% if produto[1] %}
-                {% for i in range(produto[1]|length if produto[1]|length < 5 else 5) %}
-                {% set imagem = produto[1][i][1] %}
-                <a href="{{ url_for('static', filename='uploads/' ~ imagem) }}" target="_blank">
-                  <img src="{{ url_for('static', filename='uploads/' ~ imagem) }}" alt="Imagem do produto {{ produto[0]['nome'] }}" class="img-thumbnail" />
+                {% if produto[1] %} {% for i in range(produto[1]|length if
+                produto[1]|length < 5 else 5) %} {% set imagem =
+                produto[1][i][1] %}
+                <a
+                  href="{{ url_for('static', filename='uploads/' ~ imagem) }}"
+                  target="_blank"
+                >
+                  <img
+                    src="{{ url_for('static', filename='uploads/' ~ imagem) }}"
+                    alt="Imagem do produto {{ produto[0]['nome'] }}"
+                    class="img-thumbnail"
+                  />
                 </a>
-                {% endfor %}
-                {% if produto[1]|length > 5 %}
-                <div class="d-flex align-items-center justify-content-center bg-secondary text-white rounded">
+                {% endfor %} {% if produto[1]|length > 5 %}
+                <div
+                  class="d-flex align-items-center justify-content-center bg-secondary text-white rounded"
+                >
                   +{{ produto[1]|length - 5 }}
                 </div>
-                {% endif %}
-                {% else %}
-                <img src="{{ url_for('static', filename='uploads/default.png') }}" alt="Imagem padrão" class="img-thumbnail" />
+                {% endif %} {% else %}
+                <img
+                  src="{{ url_for('static', filename='uploads/default.png') }}"
+                  alt="Imagem padrão"
+                  class="img-thumbnail"
+                />
                 {% endif %}
               </td>
               <td>{{ produto[0]['codigo'] }}</td>
               <td>{{ produto[0]['nome'] }}</td>
               <td>{{ produto[0]['marca']|default('N/A') }}</td>
-              <td class="text-truncate" style="max-width: 200px;">{{ produto[0]['descricao']|default('N/A') }}</td>
-              <td>
-                {% if produto[0]['altura'] or produto[0]['largura'] or produto[0]['comprimento'] %}
-                  {{ produto[0]['altura']|default('N/A') }} x {{ produto[0]['largura']|default('N/A') }} x {{ produto[0]['comprimento']|default('N/A') }}
-                {% else %}
-                  N/A
-                {% endif %}
+              <td class="text-truncate" style="max-width: 200px">
+                {{ produto[0]['descricao']|default('N/A') }}
               </td>
               <td>
-                {% if produto[0]['peso'] is not none and produto[0]['peso'] != '' %}
-                  {{ produto[0]['peso'] }} kg
-                {% else %}
-                  <span class="na-value">N/A</span>
+                {% if produto[0]['altura'] or produto[0]['largura'] or
+                produto[0]['comprimento'] %} {{
+                produto[0]['altura']|default('N/A') }} x {{
+                produto[0]['largura']|default('N/A') }} x {{
+                produto[0]['comprimento']|default('N/A') }} {% else %} N/A {%
+                endif %}
+              </td>
+              <td>
+                {% if produto[0]['peso'] is not none and produto[0]['peso'] !=
+                '' %} {{ produto[0]['peso'] }} kg {% else %}
+                <span class="na-value">N/A</span>
                 {% endif %}
               </td>
               <td class="text-end">
-                <button class="btn btn-sm btn-outline-primary ver-detalhes" data-bs-toggle="modal" data-bs-target="#detalhesModal"
-                  data-codigo="{{ produto[0]['codigo']|default('') }}" data-nome="{{ produto[0]['nome']|default('') }}"
-                  data-marca="{{ produto[0]['marca']|default('') }}" data-descricao="{{ produto[0]['descricao']|default('') }}"
-                  data-altura="{{ produto[0]['altura']|default('') }}" data-largura="{{ produto[0]['largura']|default('') }}"
-                  data-comprimento="{{ produto[0]['comprimento']|default('') }}" data-peso="{{ produto[0]['peso']|default('') }}"
-                  data-imagens='{{ produto[1]|map(attribute=1)|list|tojson|safe }}'
-                  data-imagens-desc='{{ produto[1]|map(attribute=2)|list|tojson|safe }}'>
+                <button
+                  class="btn btn-sm btn-outline-primary ver-detalhes"
+                  data-bs-toggle="modal"
+                  data-bs-target="#detalhesModal"
+                  data-codigo="{{ produto[0]['codigo']|default('') }}"
+                  data-nome="{{ produto[0]['nome']|default('') }}"
+                  data-marca="{{ produto[0]['marca']|default('') }}"
+                  data-descricao="{{ produto[0]['descricao']|default('') }}"
+                  data-altura="{{ produto[0]['altura']|default('') }}"
+                  data-largura="{{ produto[0]['largura']|default('') }}"
+                  data-comprimento="{{ produto[0]['comprimento']|default('') }}"
+                  data-peso="{{ produto[0]['peso']|default('') }}"
+                  data-imagens="{{ produto[1]|map(attribute=1)|list|tojson|safe }}"
+                  data-imagens-desc="{{ produto[1]|map(attribute=2)|list|tojson|safe }}"
+                >
                   <i class="fa fa-eye"></i>
                 </button>
-                <a href="{{ url_for('editar', id=produto[0]['id']) }}" class="btn btn-sm btn-warning">
+                <a
+                  href="{{ url_for('editar', id=produto[0]['id']) }}"
+                  class="btn btn-sm btn-warning"
+                >
                   <i class="fa fa-pen"></i>
                 </a>
-                <a href="{{ url_for('deletar', id=produto[0]['id']) }}" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este produto?');">
+                <a
+                  href="{{ url_for('deletar', id=produto[0]['id']) }}"
+                  class="btn btn-sm btn-danger"
+                  onclick="return confirm('Tem certeza que deseja excluir este produto?');"
+                >
                   <i class="fa fa-trash"></i>
                 </a>
               </td>
@@ -135,24 +205,49 @@
       {% endif %}
     </div>
 
-    <div class="modal fade" id="detalhesModal" tabindex="-1" aria-labelledby="detalhesModalLabel" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="detalhesModal"
+      tabindex="-1"
+      aria-labelledby="detalhesModalLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content rounded-4 shadow-lg">
           <div class="modal-header bg-primary text-white rounded-top">
             <h5 class="modal-title" id="detalhesModalLabel">
               <i class="fa fa-box-open me-2"></i> Detalhes do Produto
             </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Fechar"
+            ></button>
           </div>
           <div class="modal-body">
             <div class="row">
               <div class="col-md-6">
-                <div id="carouselImagens" class="carousel slide mb-3" data-bs-ride="carousel">
+                <div
+                  id="carouselImagens"
+                  class="carousel slide mb-3"
+                  data-bs-ride="carousel"
+                >
                   <div class="carousel-inner" id="carousel-inner"></div>
-                  <button class="carousel-control-prev" type="button" data-bs-target="#carouselImagens" data-bs-slide="prev">
+                  <button
+                    class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#carouselImagens"
+                    data-bs-slide="prev"
+                  >
                     <i class="fa fa-chevron-left"></i>
                   </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#carouselImagens" data-bs-slide="next">
+                  <button
+                    class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#carouselImagens"
+                    data-bs-slide="next"
+                  >
                     <i class="fa fa-chevron-right"></i>
                   </button>
                 </div>
@@ -160,18 +255,50 @@
               </div>
               <div class="col-md-6">
                 <h5 id="modal-nome" class="mb-3 fw-bold text-primary"></h5>
-                <p><i class="fa fa-barcode me-1"></i> <strong>Código:</strong> <span id="modal-codigo" class="text-muted"></span></p>
-                <p><i class="fa fa-tag me-1"></i> <strong>Marca:</strong> <span id="modal-marca" class="text-muted"></span></p>
-                <p><i class="fa fa-align-left me-1"></i> <strong>Descrição:</strong> <span id="modal-descricao" class="text-muted"></span></p>
-                <p><i class="fa fa-ruler-vertical me-1"></i> <strong>Altura:</strong> <span id="modal-altura" class="text-muted"></span></p>
-                <p><i class="fa fa-ruler-horizontal me-1"></i> <strong>Largura:</strong> <span id="modal-largura" class="text-muted"></span></p>
-                <p><i class="fa fa-ruler-combined me-1"></i> <strong>Comprimento:</strong> <span id="modal-comprimento" class="text-muted"></span></p>
-                <p><i class="fa fa-weight-scale me-1"></i> <strong>Peso:</strong> <span id="modal-peso" class="text-muted"></span></p>
+                <p>
+                  <i class="fa fa-barcode me-1"></i> <strong>Código:</strong>
+                  <span id="modal-codigo" class="text-muted"></span>
+                </p>
+                <p>
+                  <i class="fa fa-tag me-1"></i> <strong>Marca:</strong>
+                  <span id="modal-marca" class="text-muted"></span>
+                </p>
+                <p>
+                  <i class="fa fa-align-left me-1"></i>
+                  <strong>Descrição:</strong>
+                  <span id="modal-descricao" class="text-muted"></span>
+                </p>
+                <p>
+                  <i class="fa fa-ruler-vertical me-1"></i>
+                  <strong>Altura:</strong>
+                  <span id="modal-altura" class="text-muted"></span>
+                </p>
+                <p>
+                  <i class="fa fa-ruler-horizontal me-1"></i>
+                  <strong>Largura:</strong>
+                  <span id="modal-largura" class="text-muted"></span>
+                </p>
+                <p>
+                  <i class="fa fa-ruler-combined me-1"></i>
+                  <strong>Comprimento:</strong>
+                  <span id="modal-comprimento" class="text-muted"></span>
+                </p>
+                <p>
+                  <i class="fa fa-weight-scale me-1"></i>
+                  <strong>Peso:</strong>
+                  <span id="modal-peso" class="text-muted"></span>
+                </p>
               </div>
             </div>
           </div>
           <div class="modal-footer bg-light rounded-bottom">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1"></i> Fechar</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <i class="fa fa-times me-1"></i> Fechar
+            </button>
           </div>
         </div>
       </div>
@@ -180,112 +307,18 @@
     <footer class="footer-fixo text-muted">
       <div class="container">
         <small>© 2025 CAMB • Todos os direitos reservados.</small><br />
-        <small>Desenvolvido por <strong><a href="https://www.instagram.com/__derikoliveira/">Derik Oliveira</a></strong></small>
+        <small
+          >Desenvolvido por
+          <strong
+            ><a href="https://www.instagram.com/__derikoliveira/"
+              >Derik Oliveira</a
+            ></strong
+          ></small
+        >
       </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const botoes = document.querySelectorAll(".ver-detalhes");
-        const nome = document.getElementById("modal-nome");
-        const codigo = document.getElementById("modal-codigo");
-        const marca = document.getElementById("modal-marca");
-        const descricao = document.getElementById("modal-descricao");
-        const altura = document.getElementById("modal-altura");
-        const largura = document.getElementById("modal-largura");
-        const comprimento = document.getElementById("modal-comprimento");
-        const peso = document.getElementById("modal-peso");
-        const carouselInner = document.getElementById("carousel-inner");
-        const carouselCaption = document.getElementById("carousel-caption");
-    
-        // Define o caminho base para as imagens
-        const baseImagePath = "{{ url_for('static', filename='uploads') | safe }}/";
-    
-        botoes.forEach((botao) => {
-          botao.addEventListener("click", () => {
-            codigo.textContent = botao.getAttribute("data-codigo") || "N/A";
-            nome.textContent = botao.getAttribute("data-nome") || "N/A";
-            marca.textContent = botao.getAttribute("data-marca") || "N/A";
-            descricao.textContent = botao.getAttribute("data-descricao") || "N/A";
-            altura.textContent = botao.getAttribute("data-altura") ? `${botao.getAttribute("data-altura")} cm` : "N/A";
-            largura.textContent = botao.getAttribute("data-largura") ? `${botao.getAttribute("data-largura")} cm` : "N/A";
-            comprimento.textContent = botao.getAttribute("data-comprimento") ? `${botao.getAttribute("data-comprimento")} cm` : "N/A";
-            
-            const pesoValor = botao.getAttribute("data-peso");
-            peso.textContent = (pesoValor && pesoValor !== "None" && pesoValor !== "" && !isNaN(pesoValor)) ? `${pesoValor} kg` : "N/A";
-    
-            try {
-              const imagensRaw = botao.getAttribute("data-imagens");
-              const descricoesRaw = botao.getAttribute("data-imagens-desc");
-    
-              let imagens = [];
-              let descricoes = [];
-              if (imagensRaw) {
-                try {
-                  imagens = JSON.parse(imagensRaw);
-                } catch (parseError) {
-                  console.error("Erro ao parsear JSON de imagens:", parseError);
-                }
-              }
-              if (descricoesRaw) {
-                try {
-                  descricoes = JSON.parse(descricoesRaw);
-                } catch (parseError) {
-                  console.error("Erro ao parsear JSON de descrições:", parseError);
-                }
-              }
-    
-              carouselInner.innerHTML = "";
-              carouselCaption.innerHTML = "";
-              if (!imagens || imagens.length === 0) {
-                carouselInner.innerHTML = `<div class="carousel-item active text-center">
-                    <div class="no-image-placeholder">PRODUTO SEM IMAGEM</div>
-                  </div>`;
-                carouselCaption.innerHTML = "Nenhuma descrição disponível";
-              } else {
-                imagens.forEach((img, index) => {
-                  const imageUrl = `${baseImagePath}${img}`;
-                  const desc = descricoes[index] && descricoes[index] !== "null" ? descricoes[index] : "Nenhuma descrição disponível";
-                  carouselInner.innerHTML += `<div class="carousel-item ${index === 0 ? "active" : ""}">
-                    <img src="${imageUrl}" class="d-block mx-auto" alt="Imagem do produto" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'no-image-placeholder\\'>ERRO AO CARREGAR IMAGEM</div>';">
-                  </div>`;
-                  if (index === 0) {
-                    carouselCaption.innerHTML = desc;
-                  }
-                });
-              }
-    
-              // Atualiza a descrição ao mudar o slide
-              constcarousel = new bootstrap.Carousel(document.getElementById("carouselImagens"), { interval: true });
-              document.getElementById("carouselImagens").addEventListener('slid.bs.carousel', function (event) {
-                const activeIndex = event.to;
-                const desc = descricoes[activeIndex] && descricoes[activeIndex] !== "null" ? descricoes[activeIndex] : "Nenhuma descrição disponível";
-                carouselCaption.innerHTML = desc;
-              });
-    
-            } catch (error) {
-              console.error("Erro geral ao processar imagens:", error);
-              carouselInner.innerHTML = `<div class="carousel-item active text-center">
-                  <div class="no-image-placeholder">PRODUTO SEM IMAGEM</div>
-                </div>`;
-              carouselCaption.innerHTML = "Nenhuma descrição disponível";
-            }
-          });
-        });
-    
-        // Fecha alertas automaticamente após 4 segundos
-        const alerts = document.querySelectorAll('.alert-dismissible');
-        alerts.forEach(alert => {
-          setTimeout(() => {
-            alert.classList.remove('show');
-            alert.classList.add('fade');
-            setTimeout(() => {
-              alert.remove();
-            }, 300);
-          }, 4000);
-        });
-      });
-    </script>
+    <script src="../static/js/index.js"></script>
   </body>
 </html>
