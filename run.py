@@ -7,8 +7,8 @@ import io
 from flask_wtf.csrf import CSRFProtect
 import logging
 
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+app.config['UPLOAD_FOLDER'] = './app/static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB por imagem
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'sua_chave_secreta_aqui')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}

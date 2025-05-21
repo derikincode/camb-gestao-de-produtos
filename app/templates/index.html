@@ -15,7 +15,7 @@
     />
     <link
       rel="shortcut icon"
-      href="../static/uploads/favicon.png"
+      href="../static/images/favicon.png"
       type="image/x-icon"
     />
     <link
@@ -29,7 +29,7 @@
         <a class="navbar-brand" href="{{ url_for('index') }}">
           <img
             class="logo-camb d-inline-block"
-            src="../static/uploads/logo-camb.png"
+            src="../static/images/logo-camb.png"
             alt="Logo CAMB"
           />
           • Produtos Cadastrados
@@ -135,7 +135,7 @@
                 </div>
                 {% endif %} {% else %}
                 <img
-                  src="{{ url_for('static', filename='uploads/default.png') }}"
+                  src="{{ url_for('static', filename='../static/images/default.png') }}"
                   alt="Imagem padrão"
                   class="img-thumbnail"
                 />
