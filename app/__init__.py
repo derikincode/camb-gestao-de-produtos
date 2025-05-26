@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
-import logging
 import os
 from .config import Config
 
